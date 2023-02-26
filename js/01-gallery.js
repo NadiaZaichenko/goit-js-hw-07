@@ -22,22 +22,33 @@ function createMarkup(items) {
 `}).join('');
 };
 
-divGalleryRef.addEventListener('click',CreateBasicBox);
+divGalleryRef.addEventListener('click',createBasicBox);
   
 // Функція прибирає дефолтні налаштування браузера; перевіряє чи в потрібне місце клікнув користувач; створює модалку з потрібним зображенням; виконує закриття модалки кнопкою Escape;
-function CreateBasicBox (event){
+function createBasicBox (event){
   event.preventDefault();
   if(event.target.nodeName !== 'IMG'){
   return
  }
- const instance = basicLightbox.create(`
-  <img width="auto" src="${event.target.dataset.source}">
-`)
-  instance.show();
 
-divGalleryRef.addEventListener('keydown', (event) => {
-    if (event.code === 'Escape') {
-      instance.close()
-   } 
-});
+const instance = basicLightbox.create(
+  `<img src="${event.target.dataset.source}" width="800" height="600">`,
+  {
+    onShow: () => {
+      divGalleryRef.addEventListener("keydown", onEscapeClose);
+    },
+    onClose: () => {
+      divGalleryRef.removeEventListener("keydown", onEscapeClose);
+    },
+  }
+);
+
+instance.show();
+
+
+function onEscapeClose(event) {
+  if (event.code === "Escape") {
+    instance.close();
+  }
+}
 }
